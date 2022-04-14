@@ -165,8 +165,22 @@ class Storage {
      */
     public function readSrc($path) {
         $disk = $this->getSrcDisk();
-        if ($disk->has($path)) return $disk->read($path);
-        else throw new NotFoundHttpException('Croppa: Src image is missing');
+        if ($disk->has($path)) {
+            return $disk->read($path);
+        }
+
+        // Invoke bridge service function
+        $bridgeClass = 'App\Services\CroppaBridgeService';
+        $method = 'loadRemoteFile';
+        if (class_exists($bridgeClass) && method_exists($bridgeClass, $method)) {
+            $bridge = new $bridgeClass();
+            $data = $bridge->$method($path);
+            if (!empty($data)) {
+                return $data;
+            }
+        }
+
+        throw new NotFoundHttpException('Croppa: Src image is missing');
     }
 
     /**
