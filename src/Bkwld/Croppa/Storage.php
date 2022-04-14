@@ -174,7 +174,7 @@ class Storage {
         $method = 'loadRemoteFile';
         if (class_exists($bridgeClass) && method_exists($bridgeClass, $method)) {
             $bridge = new $bridgeClass();
-            $data = $bridge->$method($path);
+            $data = $bridge->$method($disk, $path);
             if (!empty($data)) {
                 return $data;
             }
